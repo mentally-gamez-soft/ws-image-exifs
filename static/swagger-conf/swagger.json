@@ -1,0 +1,100 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "Image exif reader API v0.0.1a",
+      "description": "Image exif reader API application",
+      "version": "1.0"
+    },
+    "basePath": "/exif-reader-api/api/v0.0.1a",
+    "schemes": [
+      "http"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "produces": [
+      "application/json"
+    ],
+    "definitions": {
+      "Payload_Get_Exif_Info": {
+        "type": "object",
+        "properties": {
+            "image-source": {
+                "type": "string"
+              }
+        }
+      }
+    },
+    "paths": {
+      "/get-exif": {
+        "post": {
+          "description": "Get the exifs info of an image",
+          "consumes": [
+            "application/json"
+          ],
+          "summary": "Indicates the pefered exifs info of an image.",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Image source",
+              "in": "body",
+              "description": "Input the source image file",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Payload_Get_Exif_Info"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response.",
+              "schema": {
+                "type": "object",
+                "properties": {                  
+                  "status": {
+                    "type": "string",
+                    "value": [0,1]
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "town": {
+                    "type": "string"
+                  },
+                  "latitude": {
+                    "type": "string"
+                  },
+                  "longitude": {
+                    "type": "string"
+                  },
+                  "altitude": {
+                    "type": "string"
+                  },
+                  "time": {
+                    "type": "string"
+                  },
+                  "temperature": {
+                    "type": "string"
+                  },
+                  "wind": {
+                    "type": "string"
+                  },
+                  "humidity": {
+                    "type": "string"
+                  },
+                  "sunrise_time": {
+                    "type": "string"
+                  },
+                  "sunset_time": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }      
+    }
+  }
