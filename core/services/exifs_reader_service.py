@@ -136,6 +136,20 @@ class ExifsReaderService:
             else "unknown"
         )
 
+    def __get_copyright(self):
+        return (
+            self.__image_file.copyright
+            if "copyright" in dir(self.__image_file)
+            else "unknown"
+        )
+
+    def __get_description(self):
+        return (
+            self.__image_file.image_description
+            if "image_description" in dir(self.__image_file)
+            else "unknown"
+        )
+
     def __get_latitude_info(self):
         result = {}
         result["status"] = True
@@ -187,8 +201,10 @@ class ExifsReaderService:
             return {
                 "status": True,
                 "image": {
+                    "copyright": self.__get_copyright(),
+                    "description": self.__get_description(),
                     "orientation": self.__get_orientation(),
-                    "date-shot": self.__get_date_shot(),
+                    "date": self.__get_date_shot(),
                     "width": self.__get_width(),
                     "height": self.__get_height(),
                     "focal-length": self.__get_focal_length(),

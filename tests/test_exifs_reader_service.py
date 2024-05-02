@@ -3,7 +3,7 @@ import unittest
 from core.services.exifs_reader_service import ExifsReaderService
 
 
-class TestImageService(unittest.TestCase):
+class TestExifsReaderService(unittest.TestCase):
 
     def test_load_image_when_non_existing_file(self):
         none_existing_image = ExifsReaderService(
