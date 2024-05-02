@@ -45,8 +45,10 @@ class ExifsWriterService:
     def set_exifs_copyright(self, copyright: str):
         self.__image_source_file.copyright = copyright
 
-    def set_exifs_description(self, description: str):
-        self.__image_source_file.image_description = description
+    def set_exifs_description(self, title: str, description: str):
+        if "xp_subject" in dir(self.__image_source_file):
+            self.__image_source_file.xp_subject = description
+        self.__image_source_file.image_description = title
 
     def set_exifs_fstop(self, fstop: float):
         self.__image_source_file.f_number = fstop

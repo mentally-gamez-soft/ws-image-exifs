@@ -36,11 +36,12 @@ def get_exif():
         }
         return jsonify(result), 200
 
-    exif_info = ExifsReaderService()
-    payload_response = exif_service.get_exif_info(
+    exifs_info = ExifsReaderService(
         **{
             "image-source": payload["image-source"],
         }
     )
+    payload_response = exifs_info.get_full_exifs()
+    print(payload_response)
 
     return jsonify(payload_response), 200

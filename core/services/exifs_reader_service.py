@@ -34,12 +34,15 @@ class ExifsReaderService:
         try:
             with open(file_name, "rb") as file:
                 self.__image_file = Image(file)
+                print(dir(self.__image_file))
         except FileNotFoundError as exc:
+            print("The image file is not existing - {}".format(exc))
             self.service_error_user_message = "The image file is not existing."
             self.service_error_tech_message = (
                 "The image file is not existing - {}".format(exc)
             )
         except Exception as exc:
+            print("Unknown error when reading the file image - {}".format(exc))
             self.service_error_user_message = "The image file is not existing."
             self.service_error_tech_message = (
                 "Unknown error when reading the file image - {}".format(exc)
@@ -55,23 +58,6 @@ class ExifsReaderService:
             if self.__image_file.has_exif
             else {"status": False, "version": "N/A"}
         )
-
-    @is_valid_image
-    def get_camera_lens_exifs(self) -> dict:
-        if self.has_exif()["status"]:
-            return {
-                "status": True,
-                "camera": {
-                    "brand": self.__image_file.make,
-                    "model": self.__image_file.model,
-                    "serial": self.__get_body_serial_number(),
-                },
-                "lens": {
-                    "brand": self.__image_file.get("lens_make", "unknown"),
-                    "model": self.__image_file.get("lens_model", "unknown"),
-                },
-                "exif-version": self.__image_file.exif_version,
-            }
 
     def __get_body_serial_number(self):
         return (
@@ -131,8 +117,22 @@ class ExifsReaderService:
 
     def __get_iso_speed(self):
         return (
+            self.__get_iso_speed_A()
+            if self.__get_iso_speed_A() != "unknown"
+            else self.__get_iso_speed_B()
+        )
+
+    def __get_iso_speed_A(self):
+        return (
             self.__image_file.iso_speed
             if "iso_speed" in dir(self.__image_file)
+            else "unknown"
+        )
+
+    def __get_iso_speed_B(self):
+        return (
+            self.__image_file.photographic_sensitivity
+            if "photographic_sensitivity" in dir(self.__image_file)
             else "unknown"
         )
 
@@ -144,10 +144,17 @@ class ExifsReaderService:
         )
 
     def __get_description(self):
-        return (
-            self.__image_file.image_description
-            if "image_description" in dir(self.__image_file)
-            else "unknown"
+        return dict(
+            title=(
+                self.__image_file.image_description
+                if "image_description" in dir(self.__image_file)
+                else "unknown"
+            ),
+            subject=(
+                self.__image_file.xp_subject
+                if "xp_subject" in dir(self.__image_file)
+                else "unknown"
+            ),
         )
 
     def __get_latitude_info(self):
@@ -196,6 +203,23 @@ class ExifsReaderService:
         return result
 
     @is_valid_image
+    def get_camera_lens_exifs(self) -> dict:
+        if self.has_exif()["status"]:
+            return {
+                "status": True,
+                "camera": {
+                    "brand": self.__image_file.make,
+                    "model": self.__image_file.model,
+                    "serial": self.__get_body_serial_number(),
+                },
+                "lens": {
+                    "brand": self.__image_file.get("lens_make", "unknown"),
+                    "model": self.__image_file.get("lens_model", "unknown"),
+                },
+                "exif-version": self.__image_file.exif_version,
+            }
+
+    @is_valid_image
     def get_image_exifs(self) -> dict:
         if self.has_exif()["status"]:
             return {
@@ -233,3 +257,10 @@ class ExifsReaderService:
                 result["gps"]["altitude"] = altitude_info
 
             return result
+
+    def get_full_exifs(self):
+        return {
+            "gear": self.get_camera_lens_exifs(),
+            "craft": self.get_image_exifs(),
+            "geoposition": self.get_gps_exifs(),
+        }

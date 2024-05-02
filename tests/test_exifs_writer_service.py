@@ -25,7 +25,7 @@ class TestExifsWriterService(unittest.TestCase):
 
     def test_set_description(self):
         self.service_writer.set_exifs_description(
-            "This is a description for an image"
+            "Lets test this title.", "This is a description for an image"
         )
         self.service_writer.save_image_file()
 
@@ -34,9 +34,9 @@ class TestExifsWriterService(unittest.TestCase):
         )
         result = image.get_image_exifs()
         self.assertEqual(
-            result["image"]["description"],
-            "This is a description for an image",
-            "The description is not correctly set => {}".format(result),
+            result["image"]["description"]["title"],
+            "Lets test this title.",
+            "The description title is not correctly set => {}".format(result),
         )
 
     def test_set_copyright(self):
